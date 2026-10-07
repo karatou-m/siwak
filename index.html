@@ -281,6 +281,8 @@
   .nav-student svg{width:18px; height:18px;}
   .nav-student:hover{color:var(--gold-strong); border-bottom-color:var(--gold);}
   @media (max-width:860px){ .nav-student{display:none;} }
+  @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]) .nav-student{color:var(--gold-strong);} }
+  :root[data-theme="dark"] .nav-student{color:var(--gold-strong);}
   .nav-toggle{
     display:none;
     background:none; border:1px solid var(--line); border-radius:10px;
