@@ -157,6 +157,14 @@
     .course-head .btn{width:100%;}
   }
   @media (prefers-reduced-motion:reduce){ *{transition:none !important;} }
+
+  /* mode sombre : titres lisibles (le vert foncé disparaît sur fond sombre) */
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]) .course-head h2,
+    :root:not([data-theme="light"]) .brand span{color:var(--gold-strong);}
+  }
+  :root[data-theme="dark"] .course-head h2,
+  :root[data-theme="dark"] .brand span{color:var(--gold-strong);}
 </style>
 </head>
 <body>
