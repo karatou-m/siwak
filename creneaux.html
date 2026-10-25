@@ -1,0 +1,568 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Créneaux de cours | Institut Siwak</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#eef2f4; --surface:#ffffff; --text:#14262e; --muted:#587078;
+  --brand:#0f4c5c; --brand-ink:#ffffff; --brand-soft:#d9e8ec;
+  --seat:#e3a72f; --seat-off:#c9d4d8;
+  --border:#d5dfe3; --warn:#a63d2a; --ok:#1f7a55;
+  --serif:"Literata", Georgia, "Times New Roman", serif;
+  --sans:system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --bg:#0c1519; --surface:#142228; --text:#e6eef0; --muted:#93aab1;
+    --brand:#5fb3c7; --brand-ink:#06222a; --brand-soft:#1b3a44;
+    --seat:#e8b64a; --seat-off:#2f444c;
+    --border:#25383f; --warn:#f0917c; --ok:#62c79a;
+    color-scheme: dark;
+  }
+}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0; background:var(--bg); color:var(--text); font-family:var(--sans); font-size:16px; line-height:1.45; min-height:100vh; padding-bottom:env(safe-area-inset-bottom,0px)}
+button,select,input{font:inherit; color:inherit}
+:focus-visible{outline:3px solid var(--brand); outline-offset:2px}
+
+header{position:sticky; top:0; z-index:5; background:var(--bg); padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px; border-bottom:1px solid var(--border)}
+.bar{max-width:640px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:12px}
+.brand{display:flex; flex-direction:column}
+.brand h1{font-family:var(--serif); font-size:1.4rem; margin:0}
+.brand span{color:var(--muted); font-size:.85rem}
+.link{background:none; border:0; color:var(--brand); text-decoration:underline; cursor:pointer; min-height:44px; padding:0 4px}
+
+main{max-width:640px; margin:0 auto; padding:16px 16px 56px}
+h2{font-family:var(--serif); font-size:1.15rem; margin:26px 0 10px}
+h2:first-child{margin-top:4px}
+.hello{margin:0 0 4px; color:var(--muted)}
+select,input{width:100%; min-height:46px; padding:8px 12px; border:1px solid var(--border); border-radius:10px; background:var(--surface)}
+
+.chips{display:flex; gap:8px; overflow-x:auto; padding:2px 16px 8px; margin:0 -16px; scrollbar-width:none}
+.chips::-webkit-scrollbar{display:none}
+.chip{flex:none; border:1px solid var(--border); background:var(--surface); padding:8px 14px; border-radius:999px; min-height:40px; cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand); color:var(--brand-ink); border-color:var(--brand)}
+
+.day{font-weight:700; margin:22px 0 8px}
+.card{background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:14px; margin-bottom:10px}
+.slot{display:grid; grid-template-columns:76px 1fr; gap:4px 14px}
+.slot.mine{border-color:var(--ok); box-shadow:inset 4px 0 0 var(--ok)}
+.when{grid-row:1 / span 3; font-family:var(--serif); line-height:1.1}
+.when b{display:block; font-size:1.6rem}
+.when small{display:block; color:var(--muted); font-size:.85rem; margin-top:4px; font-family:var(--sans)}
+.slot h3{margin:0; font-size:1.05rem}
+.line{color:var(--muted); font-size:.92rem}
+.places{display:flex; align-items:center; gap:8px; font-size:.92rem}
+.dots{display:inline-flex; gap:5px}
+.dots i{width:12px; height:12px; border-radius:50%; background:var(--seat-off); display:block}
+.dots i.on{background:var(--seat)}
+.fmt{display:inline-block; font-size:.8rem; font-weight:600; padding:2px 9px; border-radius:999px; background:var(--brand-soft); color:var(--brand); margin-left:6px; vertical-align:2px}
+.actions{grid-column:1 / -1; margin-top:10px}
+.btn{width:100%; min-height:46px; border-radius:10px; border:1px solid var(--border); background:var(--surface); font-weight:600; cursor:pointer}
+.btn.primary{background:var(--brand); color:var(--brand-ink); border-color:var(--brand)}
+.btn.danger{color:var(--warn); border-color:var(--warn)}
+.btn:disabled{opacity:.55; cursor:not-allowed}
+
+.form{display:grid; gap:12px}
+.form label{display:grid; gap:6px; font-size:.92rem; color:var(--muted)}
+.two{display:grid; grid-template-columns:1fr 1fr; gap:12px}
+.hint{color:var(--muted); font-size:.9rem; margin:0}
+.summary{display:grid; gap:6px}
+.summary div{display:flex; justify-content:space-between; gap:12px; font-size:.95rem}
+.summary span:first-child{color:var(--muted)}
+.mail{border-left:4px solid var(--brand); background:var(--surface); border-radius:6px 14px 14px 6px; padding:14px; border:1px solid var(--border); border-left:4px solid var(--brand)}
+.mail p{margin:0 0 8px}
+.mail ul{margin:6px 0 0; padding-left:18px}
+.mail li{margin-bottom:6px}
+.tabs{display:grid; grid-template-columns:1fr 1fr; background:var(--brand-soft); border-radius:12px; padding:4px; gap:4px; margin:10px 0 4px}
+.tab{border:0; background:transparent; padding:10px 8px; border-radius:9px; font-weight:600; color:var(--muted); min-height:44px; cursor:pointer}
+.tab[aria-pressed="true"]{background:var(--surface); color:var(--brand); box-shadow:0 1px 2px rgba(0,0,0,.12)}
+.weeknav{display:grid; grid-template-columns:52px 1fr 52px; gap:10px; align-items:center; margin:14px 0 4px}
+.weeknav .btn{padding:0; font-size:1.4rem}
+.weeklabel{text-align:center; font-weight:600}
+.today{display:inline-block; font-size:.75rem; font-weight:600; padding:2px 8px; border-radius:999px; background:var(--seat); color:#1a1300; margin-left:6px; vertical-align:1px}
+.slot.past{opacity:.6}
+.inscrits{grid-column:1 / -1; display:grid; gap:2px; margin-top:6px}
+.inscrit{display:flex; justify-content:space-between; align-items:center; gap:10px; font-size:.95rem}
+.link.small{min-height:36px; font-size:.9rem}
+.panel{grid-column:1 / -1; border:1px dashed var(--brand); border-radius:12px; padding:12px; display:grid; gap:10px; margin-top:8px}
+.panel label{display:grid; gap:6px; font-size:.9rem; color:var(--muted)}
+.panel label.check{display:flex; align-items:center; gap:8px}
+.panel label.check input{width:auto; min-height:0}
+.actions .btn + .btn{margin-top:8px}
+.btn.small{min-height:42px}
+.empty.slim{padding:10px; font-size:.9rem}
+.empty{background:var(--surface); border:1px dashed var(--border); border-radius:14px; padding:18px; color:var(--muted); text-align:center}
+.error{color:var(--warn); margin:0; font-size:.92rem}
+
+#toast{position:fixed; left:50%; bottom:calc(20px + env(safe-area-inset-bottom,0px)); transform:translate(-50%,20px); background:var(--text); color:var(--bg); padding:12px 18px; border-radius:12px; opacity:0; pointer-events:none; transition:opacity .2s, transform .2s; max-width:calc(100% - 32px); text-align:center; z-index:20}
+#toast.show{opacity:1; transform:translate(-50%,0)}
+@media (prefers-reduced-motion: reduce){ #toast{transition:none} }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <div class="brand"><h1>Institut Siwak</h1><span>Créneaux de cours, heure de Paris</span></div>
+    <button type="button" class="link" id="logout" hidden>Se déconnecter</button>
+  </div>
+</header>
+<main id="view"><div class="empty">Chargement…</div></main>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<script>
+/* ===== À renseigner : Supabase > Project Settings > API ===== */
+const SUPABASE_URL = 'https://VOTRE-PROJET.supabase.co';
+const SUPABASE_ANON_KEY = 'VOTRE_CLE_ANON_PUBLIQUE';   // la clé « anon public », jamais la clé service_role
+/* ============================================================== */
+
+(function(){
+const TZ = 'Europe/Paris';
+const FORMATS = { individuel:{label:'Individuel', dur:30, cap:1}, groupe:{label:'Groupe', dur:60, cap:3} };
+const $ = s => document.querySelector(s);
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------- Dates en heure de Paris ---------- */
+const fHM  = new Intl.DateTimeFormat('fr-FR', {timeZone:TZ, hour:'2-digit', minute:'2-digit'});
+const fDay = new Intl.DateTimeFormat('fr-FR', {timeZone:TZ, weekday:'long', day:'numeric', month:'long'});
+const fKey = new Intl.DateTimeFormat('en-CA', {timeZone:TZ});
+const hm = d => fHM.format(d).replace(':', ':');
+const dayKey = d => fKey.format(d);
+const dayLabel = d => { const t = fDay.format(d); return t.charAt(0).toUpperCase() + t.slice(1); };
+function parisOffset(utcMs){
+  const p = new Intl.DateTimeFormat('en-US', {timeZone:TZ, hour12:false, year:'numeric', month:'2-digit', day:'2-digit', hour:'2-digit', minute:'2-digit', second:'2-digit'}).formatToParts(new Date(utcMs));
+  const g = t => +p.find(x => x.type === t).value;
+  return Date.UTC(g('year'), g('month')-1, g('day'), g('hour') % 24, g('minute'), g('second')) - utcMs;
+}
+function parisToDate(dateStr, timeStr){
+  const [y,m,d] = dateStr.split('-').map(Number), [h,mi] = timeStr.split(':').map(Number);
+  const guess = Date.UTC(y, m-1, d, h, mi);
+  const first = guess - parisOffset(guess);
+  return new Date(guess - parisOffset(first));
+}
+
+/* ---------- Semaine (lundi au dimanche, heure de Paris) ---------- */
+const addDays = (key, n) => {
+  const [y,m,d] = key.split('-').map(Number);
+  return new Date(Date.UTC(y, m-1, d+n)).toISOString().slice(0,10);
+};
+const fWd = new Intl.DateTimeFormat('en-US', {timeZone:TZ, weekday:'short'});
+const WD = {Mon:0, Tue:1, Wed:2, Thu:3, Fri:4, Sat:5, Sun:6};
+const mondayKey = () => addDays(dayKey(new Date()), -WD[fWd.format(new Date())]);
+const fShort = new Intl.DateTimeFormat('fr-FR', {timeZone:TZ, day:'numeric', month:'long'});
+
+/* ---------- État ---------- */
+const ui = { me:null, noProfile:false, diag:'', tab:'semaine', week:0, cours:[], profs:[], eleves:[], slots:[], panel:null, filter:'all', confirm:null, busy:false,
+  form:{ cours:'', prof:'', mode:'ouvert', semaines:'1', el:['','',''], format:'groupe', date:dayKey(new Date(Date.now() + 864e5)), time:'18:00' }, loginError:'' };
+let sb = null;
+let toastTimer;
+function toast(msg){
+  const t = $('#toast'); t.textContent = msg; t.classList.add('show');
+  clearTimeout(toastTimer); toastTimer = setTimeout(() => t.classList.remove('show'), 3200);
+}
+function friendly(error){
+  console.error(error);
+  if(error.code === 'P0001') return error.message;                       // règles métier de la base
+  if(error.code === '23P01') return 'Vous avez déjà un créneau à cette heure.';
+  if(error.code === '23505') return 'Déjà inscrit à ce créneau.';
+  if(error.code === '42501') return 'Action non autorisée pour votre compte.';
+  return 'Une erreur est survenue. Réessayez dans un instant.';
+}
+
+/* ---------- Données ---------- */
+async function enter(user){
+  const { data, error } = await sb.from('profils').select('id, role, prenom, nom').eq('id', user.id).maybeSingle();
+  if(error || !data){
+    console.error(error);
+    ui.diag = error ? (error.code + ' : ' + error.message) : ('Aucune ligne dans profils pour ' + user.email + ' (' + user.id + ')');
+    ui.me = null; ui.noProfile = true; render(); return;
+  }
+  ui.me = data; ui.noProfile = false; ui.form.prof = data.id;
+  await refresh();
+}
+async function refresh(){
+  const role = ui.me.role;
+  if(role === 'eleve'){
+    const { data, error } = await sb.from('creneaux_places').select('*').order('debut');
+    if(error) toast(friendly(error));
+    ui.slots = data || [];
+  } else {
+    if(!ui.cours.length){
+      const r = await sb.from('cours').select('id, nom').order('id');
+      ui.cours = r.data || [];
+      if(ui.cours.length && !ui.form.cours) ui.form.cours = String(ui.cours[0].id);
+    }
+    const admin = role === 'admin';
+    if(admin && !ui.profs.length){
+      const r = await sb.from('profils').select('id, prenom, nom, role').in('role', ['prof', 'admin']).order('prenom');
+      ui.profs = r.data || [];
+    }
+    if(!ui.eleves.length){
+      const r = await sb.from('eleves_liste').select('id, prenom, nom').order('prenom');
+      ui.eleves = r.data || [];
+    }
+    const sel = 'id, prof_id, serie_id, ferme, format, debut, fin, capacite, cours(nom), reservations(id, eleve_id, profils(prenom, nom))'
+      + (admin ? ', prof:profils!creneaux_prof_id_fkey(prenom)' : '');
+    let q = sb.from('creneaux').select(sel).gte('debut', parisToDate(mondayKey(), '00:00').toISOString()).order('debut');
+    if(!admin) q = q.eq('prof_id', ui.me.id);
+    const { data, error } = await q;
+    if(error) toast(friendly(error));
+    ui.slots = data || [];
+  }
+  render();
+}
+
+/* ---------- Rendu ---------- */
+const minutes = s => Math.round((new Date(s.fin) - new Date(s.debut)) / 60000);
+function dots(taken, cap){
+  let h = '';
+  for(let i = 0; i < cap; i++) h += '<i class="' + (i < taken ? 'on' : '') + '"></i>';
+  return '<span class="dots" aria-hidden="true">' + h + '</span>';
+}
+function groupByDay(list, cardFn){
+  let cur = '', h = '';
+  list.forEach(s => {
+    const d = new Date(s.debut), k = dayKey(d);
+    if(k !== cur){ cur = k; h += '<div class="day">' + dayLabel(d) + '</div>'; }
+    h += cardFn(s);
+  });
+  return h;
+}
+
+function viewLogin(){
+  return '<h2>Connexion</h2><form class="card form" id="login">'
+    + '<label>Adresse e-mail<input type="email" id="email" autocomplete="username" required></label>'
+    + '<label>Mot de passe<input type="password" id="password" autocomplete="current-password" required></label>'
+    + (ui.loginError ? '<p class="error" role="alert">' + esc(ui.loginError) + '</p>' : '')
+    + '<button class="btn primary" type="submit">Se connecter</button>'
+    + '<p class="hint">Votre compte est créé par l’Institut. Si vous n’avez pas de compte, contactez-nous.</p></form>';
+}
+
+function cardEleve(s){
+  const taken = s.capacite - s.places_restantes;
+  const st = new Date(s.debut), en = new Date(s.fin);
+  const left = s.places_restantes;
+  const txt = s.deja_inscrit ? 'Vous êtes inscrit' : left <= 0 ? 'Complet'
+    : left + ' place' + (left > 1 ? 's' : '') + ' libre' + (left > 1 ? 's' : '') + ' sur ' + s.capacite;
+  let btn;
+  if(s.deja_inscrit) btn = '<button class="btn" data-act="cancel" data-id="' + s.id + '">Annuler mon inscription</button>';
+  else if(left <= 0) btn = '<button class="btn" disabled>Complet</button>';
+  else btn = '<button class="btn primary" data-act="book" data-id="' + s.id + '">S’inscrire</button>';
+  return '<article class="card slot ' + (s.deja_inscrit ? 'mine' : '') + '">'
+    + '<div class="when"><b>' + hm(st) + '</b><small>jusqu’à ' + hm(en) + '</small></div>'
+    + '<h3>' + esc(s.cours) + '<span class="fmt">' + (FORMATS[s.format] || {}).label + '</span></h3>'
+    + '<div class="line">' + esc(s.prof_prenom) + ', ' + minutes(s) + ' min</div>'
+    + '<div class="places">' + dots(taken, s.capacite) + '<span>' + txt + '</span></div>'
+    + '<div class="actions">' + btn + '</div></article>';
+}
+function viewEleve(){
+  const mine = ui.slots.filter(s => s.deja_inscrit);
+  const names = Array.from(new Set(ui.slots.map(s => s.cours)));
+  const shown = ui.slots.filter(s => ui.filter === 'all' || s.cours === ui.filter);
+  let h = '<p class="hello">Bonjour ' + esc(ui.me.prenom) + '</p><h2>Mes inscriptions</h2>';
+  h += mine.length
+    ? '<div class="card summary">' + mine.map(s => '<div><span>' + dayLabel(new Date(s.debut)) + ' à ' + hm(new Date(s.debut)) + '</span><span>' + esc(s.cours) + '</span></div>').join('') + '</div>'
+    : '<div class="empty">Aucune inscription pour le moment. Choisissez un créneau ci-dessous.</div>';
+  h += '<h2>Créneaux disponibles</h2><div class="chips" role="group" aria-label="Filtrer par cours">'
+    + ['all'].concat(names).map(c => '<button type="button" class="chip" data-filter="' + esc(c) + '" aria-pressed="' + (ui.filter === c) + '">' + (c === 'all' ? 'Tous les cours' : esc(c)) + '</button>').join('')
+    + '</div>';
+  h += shown.length ? groupByDay(shown, cardEleve) : '<div class="empty">Aucun créneau publié pour le moment. Revenez bientôt.</div>';
+  return h;
+}
+
+function panelHtml(s, p, res){
+  const suiv = s.serie_id
+    ? '<label class="check"><input type="checkbox" data-f="p_suiv"' + (p.suivantes ? ' checked' : '') + '> Appliquer aussi aux séances suivantes de la série</label>' : '';
+  const fin = '<button class="btn small" type="button" data-act="close-panel">Annuler</button>';
+  if(p.kind === 'rm'){
+    const r = res.find(x => x.id === p.rid);
+    if(!r) return '';
+    return '<div class="panel"><div>Retirer <b>' + esc(nomInscrit(r)) + '</b> de ce créneau ?</div>' + suiv
+      + '<button class="btn danger small" type="button" data-act="do-rm">Confirmer le retrait</button>' + fin + '</div>';
+  }
+  if(p.kind === 'add'){
+    const deja = res.map(r => r.eleve_id);
+    return '<div class="panel"><label>Élève<select data-f="p_el"><option value="">Choisir un élève</option>'
+      + ui.eleves.filter(e => deja.indexOf(e.id) === -1).map(e => '<option value="' + e.id + '"' + (e.id === p.el ? ' selected' : '') + '>' + esc(e.prenom + ' ' + e.nom) + '</option>').join('')
+      + '</select></label>' + suiv + '<button class="btn primary small" type="button" data-act="do-add">Ajouter cet élève</button>' + fin + '</div>';
+  }
+  return '<div class="panel"><div class="two"><label>Date<input type="date" data-f="p_date" value="' + esc(p.date) + '"></label>'
+    + '<label>Heure (Paris)<input type="time" data-f="p_time" value="' + esc(p.time) + '"></label></div>' + suiv
+    + '<button class="btn primary small" type="button" data-act="do-move">Déplacer</button>' + fin + '</div>';
+}
+function cardProf(s){
+  const d = new Date(s.debut), en = new Date(s.fin);
+  const res = s.reservations || [];
+  const asking = ui.confirm === s.id;
+  const label = asking ? (res.length ? 'Confirmer, ' + res.length + ' inscrit' + (res.length > 1 ? 's' : '') + ' concerné' + (res.length > 1 ? 's' : '') : 'Confirmer la suppression') : (s.serie_id ? 'Supprimer cette séance seulement' : 'Supprimer ce créneau');
+  const askingSerie = ui.confirm === s.id + '|serie';
+  const labelSerie = askingSerie ? 'Confirmer : cette séance et les suivantes' : 'Supprimer cette séance et les suivantes';
+  const who = ui.me.role === 'admin' && s.prof ? esc(s.prof.prenom) + ', ' : '';
+  const p = ui.panel && ui.panel.slotId === s.id ? ui.panel : null;
+  let h = '<article class="card slot"><div class="when"><b>' + hm(d) + '</b><small>jusqu’à ' + hm(en) + '</small></div>'
+    + '<h3>' + esc(s.cours && s.cours.nom) + '<span class="fmt">' + (FORMATS[s.format] || {}).label + '</span></h3>'
+    + '<div class="line">' + who + res.length + ' inscrit' + (res.length > 1 ? 's' : '') + ' sur ' + s.capacite + (s.serie_id ? ', chaque semaine' : '') + (s.ferme ? ', cours convenu' : '') + '</div>'
+    + '<div class="places">' + dots(res.length, s.capacite) + '<span class="line">' + (res.length ? '' : 'Aucun inscrit') + '</span></div>';
+  if(res.length){
+    h += '<div class="inscrits">' + res.map(r => '<div class="inscrit"><span>' + esc(nomInscrit(r)) + '</span>'
+      + '<button type="button" class="link small" data-act="open-rm" data-id="' + s.id + '" data-rid="' + r.id + '">Retirer</button></div>').join('') + '</div>';
+  }
+  if(p) h += panelHtml(s, p, res);
+  h += '<div class="actions">';
+  if(res.length < s.capacite) h += '<button class="btn small" type="button" data-act="open-add" data-id="' + s.id + '">Ajouter un élève</button>';
+  h += '<button class="btn small" type="button" data-act="open-move" data-id="' + s.id + '">Changer la date ou l’heure</button>'
+    + '<button class="btn danger" data-act="del" data-id="' + s.id + '">' + label + '</button>'
+    + (s.serie_id ? '<button class="btn danger" data-act="delserie" data-id="' + s.id + '">' + labelSerie + '</button>' : '')
+    + '</div></article>';
+  return h;
+}
+function nomInscrit(r){
+  return r.profils ? (r.profils.prenom + ' ' + (r.profils.nom || '')).trim() : '';
+}
+function prenomInscrit(r){ return r.profils ? r.profils.prenom : ''; }
+function optionsEleves(sel){
+  return ui.eleves.map(e => '<option value="' + e.id + '"' + (e.id === sel ? ' selected' : '') + '>' + esc(e.prenom + ' ' + e.nom) + '</option>').join('');
+}
+function eleveSelects(f, fm){
+  let h = '';
+  for(let i = 0; i < fm.cap; i++){
+    h += '<label>' + (fm.cap > 1 ? 'Élève ' + (i + 1) : 'Élève') + (i === 0 ? '' : ' (facultatif)')
+      + '<select data-f="el' + i + '"><option value="">' + (i === 0 ? 'Choisir un élève' : 'Aucun') + '</option>' + optionsEleves(f.el[i]) + '</select></label>';
+  }
+  return h;
+}
+function cardSemaine(s){
+  const d = new Date(s.debut), en = new Date(s.fin), res = s.reservations || [];
+  const names = res.map(nomInscrit).filter(Boolean);
+  const who = ui.me.role === 'admin' && s.prof ? esc(s.prof.prenom) + ', ' : '';
+  return '<article class="card slot' + (en < new Date() ? ' past' : '') + '"><div class="when"><b>' + hm(d) + '</b><small>jusqu’à ' + hm(en) + '</small></div>'
+    + '<h3>' + esc(s.cours && s.cours.nom) + '<span class="fmt">' + (FORMATS[s.format] || {}).label + '</span></h3>'
+    + '<div class="line">' + who + res.length + ' inscrit' + (res.length > 1 ? 's' : '') + ' sur ' + s.capacite + (s.ferme ? ', cours convenu' : '') + '</div>'
+    + '<div class="places">' + dots(res.length, s.capacite) + '<span class="line">' + (names.length ? esc(names.join(', ')) : 'Aucun inscrit') + '</span></div></article>';
+}
+function viewSemaine(){
+  const m0 = addDays(mondayKey(), 7 * ui.week);
+  const days = [0,1,2,3,4,5,6].map(i => addDays(m0, i));
+  const today = dayKey(new Date());
+  let nbCours = 0, nbEleves = 0, corps = '';
+  days.forEach(k => {
+    const list = ui.slots.filter(s => dayKey(new Date(s.debut)) === k);
+    nbCours += list.length;
+    list.forEach(s => { nbEleves += (s.reservations || []).length; });
+    const t = dayFmt(k);
+    corps += '<div class="day">' + esc(t) + (k === today ? '<span class="today">Aujourd’hui</span>' : '') + '</div>'
+      + (list.length ? list.map(cardSemaine).join('') : '<div class="empty slim">Aucun cours</div>');
+  });
+  return '<div class="weeknav"><button class="btn" data-act="wprev" aria-label="Semaine précédente"' + (ui.week <= 0 ? ' disabled' : '') + '>‹</button>'
+    + '<div class="weeklabel">' + (ui.week === 0 ? 'Cette semaine' : 'Semaine du ' + esc(fShort.format(parisToDate(m0, '12:00')))) + '<br><span class="line">du ' + esc(fShort.format(parisToDate(days[0], '12:00'))) + ' au ' + esc(fShort.format(parisToDate(days[6], '12:00'))) + '</span></div>'
+    + '<button class="btn" data-act="wnext" aria-label="Semaine suivante"' + (ui.week >= 8 ? ' disabled' : '') + '>›</button></div>'
+    + '<p class="hint" style="text-align:center;margin:8px 0 0">' + nbCours + ' cours, ' + nbEleves + ' inscription' + (nbEleves > 1 ? 's' : '') + '</p>'
+    + corps;
+}
+function dayFmt(k){ const t = fDay.format(parisToDate(k, '12:00')); return t.charAt(0).toUpperCase() + t.slice(1); }
+
+function viewProf(){
+  const admin = ui.me.role === 'admin';
+  const f = ui.form, fm = FORMATS[f.format];
+  let h = '<p class="hello">Bonjour ' + esc(ui.me.prenom) + '</p>'
+    + '<div class="tabs" role="group" aria-label="Vue"><button type="button" class="tab" data-tab="semaine" aria-pressed="' + (ui.tab === 'semaine') + '">Ma semaine</button>'
+    + '<button type="button" class="tab" data-tab="gerer" aria-pressed="' + (ui.tab === 'gerer') + '">Publier et gérer</button></div>';
+  if(ui.tab === 'semaine') return h + viewSemaine();
+  {
+    h += '<h2>' + (f.mode === 'convenu' ? 'Saisir un cours convenu' : 'Publier un créneau') + '</h2><div class="card form">'
+      + '<div class="tabs" role="group" aria-label="Type de créneau"><button type="button" class="tab" data-mode="ouvert" aria-pressed="' + (f.mode === 'ouvert') + '">Ouvert aux inscriptions</button>'
+      + '<button type="button" class="tab" data-mode="convenu" aria-pressed="' + (f.mode === 'convenu') + '">Cours déjà convenu</button></div>'
+      + (admin ? '<label>Enseignant<select data-f="prof">' + ui.profs.map(p => '<option value="' + p.id + '"' + (p.id === f.prof ? ' selected' : '') + '>' + esc(p.prenom + ' ' + p.nom) + '</option>').join('') + '</select></label>' : '')
+      + '<label>Cours<select data-f="cours">' + ui.cours.map(c => '<option value="' + c.id + '"' + (String(c.id) === String(f.cours) ? ' selected' : '') + '>' + esc(c.nom) + '</option>').join('') + '</select></label>'
+      + '<label>Format<select data-f="format">' + Object.keys(FORMATS).map(k => '<option value="' + k + '"' + (k === f.format ? ' selected' : '') + '>' + FORMATS[k].label + '</option>').join('') + '</select></label>'
+      + '<div class="two"><label>Date<input type="date" data-f="date" value="' + f.date + '"></label><label>Heure (Paris)<input type="time" data-f="time" value="' + f.time + '"></label></div>'
+      + '<label>Répéter chaque semaine<select data-f="semaines">' + [1,4,8,12,16,24].map(n => '<option value="' + n + '"' + (String(n) === String(f.semaines) ? ' selected' : '') + '>' + (n === 1 ? 'Une seule fois' : 'Pendant ' + n + ' semaines') + '</option>').join('') + '</select></label>'
+      + (f.mode === 'convenu' ? eleveSelects(f, fm) : '')
+      + '<p class="hint">Durée de ' + fm.dur + ' min, ' + fm.cap + ' place' + (fm.cap > 1 ? 's' : '') + '. ' + (f.mode === 'convenu' ? 'Les élèves choisis sont inscrits directement et ce cours n’apparaît pas aux autres élèves.' : 'Les élèves pourront s’inscrire eux-mêmes.') + '</p>'
+      + '<button class="btn primary" data-act="publish"' + (ui.busy ? ' disabled' : '') + '>' + (f.mode === 'convenu' ? 'Enregistrer ce cours' : 'Publier le créneau') + '</button></div>';
+
+    if(!admin){
+    const tk = dayKey(new Date(Date.now() + 864e5));
+    const tom = ui.slots.filter(s => dayKey(new Date(s.debut)) === tk);
+    h += '<h2>Rappel envoyé la veille</h2>';
+    h += tom.length
+      ? '<div class="mail"><p><b>Vos cours de demain (' + tom.length + ')</b></p><p>Bonjour ' + esc(ui.me.prenom) + ',</p><ul>'
+        + tom.map(s => {
+            const names = (s.reservations || []).map(prenomInscrit).filter(Boolean);
+            return '<li><b>' + hm(new Date(s.debut)) + ' à ' + hm(new Date(s.fin)) + '</b>, ' + esc(s.cours && s.cours.nom) + '<br><span class="line">' + (names.length ? esc(names.join(', ')) : 'Aucun inscrit pour le moment') + '</span></li>';
+          }).join('') + '</ul></div><p class="hint" style="margin-top:8px">Aperçu du mail que vous recevrez.</p>'
+      : '<div class="empty">Aucun cours demain, donc aucun mail de rappel.</div>';
+    }
+  }
+  h += '<h2>' + (admin ? 'Tous les créneaux à venir' : 'Mes créneaux à venir') + '</h2>';
+  const avenir = ui.slots.filter(s => new Date(s.fin) > new Date());
+  h += avenir.length ? groupByDay(avenir, cardProf) : '<div class="empty">Aucun créneau publié.</div>';
+  return h;
+}
+
+function render(){
+  $('#logout').hidden = !ui.me;
+  let h;
+  if(ui.noProfile) h = '<div class="empty">Votre compte n’est pas encore rattaché à un profil. Contactez l’Institut.<br><small>' + esc(ui.diag) + '</small></div>';
+  else if(!ui.me) h = viewLogin();
+  else if(ui.me.role === 'eleve') h = viewEleve();
+  else h = viewProf();
+  $('#view').innerHTML = h;
+}
+
+/* ---------- Actions ---------- */
+async function book(id){
+  if(ui.busy) return; ui.busy = true;
+  const { error } = await sb.from('reservations').insert({ creneau_id:id, eleve_id:ui.me.id });
+  ui.busy = false;
+  toast(error ? friendly(error) : 'Inscription confirmée');
+  await refresh();
+}
+async function cancel(id){
+  if(ui.busy) return; ui.busy = true;
+  const { error } = await sb.from('reservations').delete().eq('creneau_id', id).eq('eleve_id', ui.me.id);
+  ui.busy = false;
+  toast(error ? friendly(error) : 'Inscription annulée');
+  await refresh();
+}
+function erreurPublication(error){
+  if(error.code === 'P0001' && /déjà un cours/.test(error.message || '')) return 'Un des élèves choisis a déjà un cours à cette heure.';
+  if(error.code === '23P01') return 'Ce créneau, ou l’une des semaines répétées, chevauche un autre créneau de l’enseignant.';
+  return friendly(error);
+}
+async function publish(){
+  const f = ui.form;
+  if(!f.date || !f.time || !f.cours) return toast('Choisissez un cours, une date et une heure.');
+  const start = parisToDate(f.date, f.time);
+  if(start <= new Date()) return toast('Ce créneau est dans le passé.');
+  const fm = FORMATS[f.format];
+  const convenu = f.mode === 'convenu';
+  const eleves = convenu ? f.el.slice(0, fm.cap).filter(Boolean) : [];
+  if(convenu && !eleves.length) return toast('Choisissez au moins un élève.');
+  if(new Set(eleves).size !== eleves.length) return toast('Le même élève est choisi deux fois.');
+  const n = Number(f.semaines) || 1;
+  ui.busy = true; render();
+  const { error } = await sb.rpc('publier_creneaux', {
+    p_prof: (ui.me.role === 'admin' && f.prof) ? f.prof : ui.me.id,
+    p_cours: Number(f.cours), p_format: f.format, p_debut: start.toISOString(),
+    p_semaines: n, p_eleves: eleves, p_ferme: convenu
+  });
+  ui.busy = false;
+  if(!error) f.el = ['','',''];
+  toast(error ? erreurPublication(error) : (convenu ? (n > 1 ? n + ' cours enregistrés' : 'Cours enregistré') : (n > 1 ? n + ' créneaux publiés' : 'Créneau publié')));
+  await refresh();
+}
+async function editer(fn, ok){
+  const { data, error } = await fn();
+  if(error) toast(erreurPublication(error));
+  else if(data === 0) toast('Action non autorisée ou rien à modifier.');
+  else { toast(ok); ui.panel = null; }
+  await refresh();
+}
+function doAdd(){
+  const p = ui.panel; if(!p) return;
+  if(!p.el) return toast('Choisissez un élève.');
+  return editer(() => sb.rpc('ajouter_inscrit', { p_creneau: p.slotId, p_eleve: p.el, p_suivantes: !!p.suivantes }), 'Élève ajouté');
+}
+function doRm(){
+  const p = ui.panel; if(!p) return;
+  return editer(() => sb.rpc('retirer_inscrit', { p_reservation: p.rid, p_suivantes: !!p.suivantes }), 'Élève retiré');
+}
+function doMove(){
+  const p = ui.panel; if(!p) return;
+  if(!p.date || !p.time) return toast('Choisissez une date et une heure.');
+  const nd = parisToDate(p.date, p.time);
+  if(nd <= new Date()) return toast('La nouvelle date est dans le passé.');
+  return editer(() => sb.rpc('deplacer_creneau', { p_creneau: p.slotId, p_debut: nd.toISOString(), p_suivantes: !!p.suivantes }), 'Créneau déplacé');
+}
+function ouvrirPanel(kind, id, rid){
+  const s = ui.slots.find(x => x.id === id); if(!s) return;
+  const d = new Date(s.debut);
+  ui.panel = { kind, slotId: id, rid, suivantes: false, el: '', date: dayKey(d), time: hm(d) };
+  render();
+}
+async function delserie(id){
+  const tok = id + '|serie';
+  if(ui.confirm !== tok){ ui.confirm = tok; render(); return; }
+  ui.confirm = null;
+  const s = ui.slots.find(x => x.id === id);
+  if(!s || !s.serie_id) return;
+  const { error } = await sb.from('creneaux').delete().eq('serie_id', s.serie_id).gte('debut', s.debut);
+  toast(error ? friendly(error) : 'Séances supprimées');
+  await refresh();
+}
+async function del(id){
+  if(ui.confirm !== id){ ui.confirm = id; render(); return; }
+  ui.confirm = null;
+  const { error } = await sb.from('creneaux').delete().eq('id', id);
+  toast(error ? friendly(error) : 'Créneau supprimé');
+  await refresh();
+}
+
+/* ---------- Événements ---------- */
+document.addEventListener('click', e => {
+  const c = e.target.closest('[data-filter]');
+  if(c){ ui.filter = c.dataset.filter; render(); return; }
+  const md = e.target.closest('[data-mode]');
+  if(md){ ui.form.mode = md.dataset.mode; render(); return; }
+  const tb = e.target.closest('[data-tab]');
+  if(tb){ ui.tab = tb.dataset.tab; render(); return; }
+  const a = e.target.closest('[data-act]'); if(!a) return;
+  const id = a.dataset.id;
+  if(a.dataset.act === 'book') book(id);
+  else if(a.dataset.act === 'cancel') cancel(id);
+  else if(a.dataset.act === 'publish') publish();
+  else if(a.dataset.act === 'del') del(id);
+  else if(a.dataset.act === 'delserie') delserie(id);
+  else if(a.dataset.act === 'open-rm') ouvrirPanel('rm', id, a.dataset.rid);
+  else if(a.dataset.act === 'open-add') ouvrirPanel('add', id);
+  else if(a.dataset.act === 'open-move') ouvrirPanel('move', id);
+  else if(a.dataset.act === 'close-panel'){ ui.panel = null; render(); }
+  else if(a.dataset.act === 'do-rm') doRm();
+  else if(a.dataset.act === 'do-add') doAdd();
+  else if(a.dataset.act === 'do-move') doMove();
+  else if(a.dataset.act === 'wprev'){ ui.week = Math.max(0, ui.week - 1); render(); }
+  else if(a.dataset.act === 'wnext'){ ui.week = Math.min(8, ui.week + 1); render(); }
+});
+function majChamp(t, avecRendu){
+  if(!t.dataset || !t.dataset.f) return;
+  const k = t.dataset.f, v = t.type === 'checkbox' ? t.checked : t.value;
+  if(/^el[0-2]$/.test(k)) ui.form.el[Number(k.slice(2))] = v;
+  else if(k.startsWith('p_')){ if(ui.panel) ui.panel[k === 'p_suiv' ? 'suivantes' : k.slice(2)] = v; }
+  else { ui.form[k] = v; if(avecRendu && k === 'format') render(); }
+}
+document.addEventListener('change', e => majChamp(e.target, true));
+document.addEventListener('submit', async e => {
+  if(e.target.id !== 'login') return;
+  e.preventDefault();
+  ui.loginError = '';
+  const { data, error } = await sb.auth.signInWithPassword({ email: $('#email').value.trim(), password: $('#password').value });
+  if(error){ ui.loginError = 'Adresse e-mail ou mot de passe incorrect.'; render(); return; }
+  await enter(data.user);
+});
+$('#logout').addEventListener('click', async () => {
+  await sb.auth.signOut();
+  ui.me = null; ui.slots = []; ui.cours = []; ui.noProfile = false; render();
+});
+
+/* ---------- Démarrage ---------- */
+(async function init(){
+  if(SUPABASE_URL.indexOf('VOTRE-PROJET') !== -1 || SUPABASE_ANON_KEY.indexOf('VOTRE_CLE') !== -1){
+    $('#view').innerHTML = '<div class="empty">Renseignez SUPABASE_URL et SUPABASE_ANON_KEY en haut du fichier pour activer la page.</div>';
+    return;
+  }
+  sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  const { data } = await sb.auth.getSession();
+  if(data.session) await enter(data.session.user); else render();
+})();
+})();
+</script>
+</body>
+</html>
